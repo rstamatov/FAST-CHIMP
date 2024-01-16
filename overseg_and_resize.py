@@ -1,14 +1,9 @@
-from __future__ import print_function, unicode_literals, absolute_import, division
 import numpy as np
 import matplotlib.pyplot as plt
 from tifffile import imread, imsave
-from csbdeep.utils import axes_dict, plot_some, plot_history
-from csbdeep.utils.tf import limit_gpu_memory
-from csbdeep.io import load_training_data
-from csbdeep.models import Config, CARE
+
 import os
 from scipy.ndimage import zoom
-from skimage.filters import sato
 
 # for watershed
 from skimage.segmentation import watershed
@@ -24,7 +19,7 @@ from skimage.morphology import extrema
 
 import sys
 
-intensity_threshold = 50
+intensity_threshold = 20
 watershed_tolerance = 0.1
 
 if len (sys.argv) == 3:
@@ -32,9 +27,6 @@ if len (sys.argv) == 3:
     watershed_tolerance = float(sys.argv[2])
 
 ############################################################################################
-
-def tubeness(image):
-    return sato(image, sigmas = [4], black_ridges = False)
 
 def resize (image, target_shape = (64, 256, 256)):
     Nz, Ny, Nx = np.shape(image)
@@ -48,7 +40,7 @@ def change_bit_depth(image):
 
 #############################################################################################
 
-def watershed_oversegmentation(t, image, intensity_threshold, watershed_tolerance):
+def watershed_oversegmentation(f, image, intensity_threshold, watershed_tolerance):
 
     if not os.path.exists("overseg"):
         os.mkdir("overseg")
@@ -59,20 +51,21 @@ def watershed_oversegmentation(t, image, intensity_threshold, watershed_toleranc
     mask[image > intensity_threshold] = 1
     labels = watershed(255-image, h_maxima, mask = mask.astype(bool))
 
-    imsave("overseg/t" + str(t) + ".tif", resize(labels))
+    imsave("overseg/" + f, resize(labels))
 
 #############################################################################################
 
 def correction (z, img_2d):
 	delta = 1
 	if z > 5:
-		delta = 25 / (25 - 0.36 * (z-5))
+		delta = 25 / (25 - 0.192 * (z-5))
 	img_2d[img_2d > 1] *= delta
 	return img_2d
 
 def correct_axial_dimness(img):
     corrected = np.zeros_like(img)
-    for z in range(64):
+    (Nz, Ny, Nx) = np.shape(corrected)
+    for z in range(Nz):
         corrected_2d = correction(z, img[z, :, :])
         corrected[z, :, :] = corrected_2d
     return corrected
@@ -85,21 +78,23 @@ from os import listdir
 from os.path import isfile, join
 all_files = [f for f in listdir(input_file_location) if isfile(join(input_file_location, f))]
 
-if not os.path.exists("tubeness"):
-    os.mkdir("tubeness")
+
+if not os.path.exists("resized"):
+    os.mkdir("resized")
+
+if not os.path.exists("resized/test"):
+    os.mkdir("resized/test")
+
+if not os.path.exists("resized/test/images"):
+    os.mkdir("resized/test/images")
 
 for f in all_files:
-    print(f)
-    t = int(f[-8:-4])
+    print("Processing file " + f)
     
-    img = imread(input_file_location + "/" + f)
-    tube = tubeness(img)
-    imsave("tubeness/t" + str(t) + ".tif", tube)
-    
-    corrected = correct_axial_dimness(tube)
+    img = imread(input_file_location + "/" + f)    
+    imsave("resized/test/images/" + f, resize(img))
 
-
+    watershed_oversegmentation(f, imgcorrected, intensity_threshold, watershed_tolerance)
     
-    watershed_oversegmentation(t, corrected, intensity_threshold, watershed_tolerance)
 
 
