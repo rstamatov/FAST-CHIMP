@@ -3,6 +3,7 @@ from tifffile import imread, imsave
 from csbdeep.models import Config, CARE
 from os import listdir
 from os.path import isfile, join
+import os
 
 ############################################################################################
 
