@@ -12,7 +12,7 @@ Facilitated Segmentation and Tracking of Chromosomes in Mitosis Pipeline
 We recommend visual inspection of the denoising results at this point. It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N and N2V, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
 
 ## Resizing and oversegmentation
-5. Now the restored images will be resized to match the dimensions of the trained segmentation model. We also need to perform an oversegmentation, to help with the tracking step later. To perform both actions, run the script "overseg_and_resize.py":
+5. Now the restored images will be resized to match the dimensions of the trained segmentation model. We also need to perform an oversegmentation, to help with the tracking step later. To perform both actions, run the script\n "overseg_and_resize.py":
    python overseg_and_resize.py 20 0.1
    The two arguments are to the Watershed segmentation parameters - intensity threshold and tolerance. You can vary them and inspect the results in the folder "overseg" which the script will create. The default values should be OK. You should look for an oversegmentation where a chromosome is roughly split into 10 chunks.
 
