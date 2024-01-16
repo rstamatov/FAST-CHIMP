@@ -1,0 +1,38 @@
+(FixedImageDimension 3)
+(MovingImageDimension 3)
+(UseDirectionCosines "true")
+// **************** Main Components **************************
+(Registration "MultiResolutionRegistration")
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+(FixedImagePyramid "FixedSmoothingImagePyramid")
+(MovingImagePyramid "MovingSmoothingImagePyramid")
+(Optimizer "AdaptiveStochasticGradientDescent")
+(Transform "AffineTransform")
+(AutomaticTransformInitializationMethod "CenterOfGravity")
+( AutomaticScalesEstimation "true" )
+(Metric "AdvancedMeanSquares")
+// ***************** Transformation **************************
+(AutomaticScalesEstimation "true")
+(AutomaticTransformInitialization "true")
+(HowToCombineTransforms "Compose")
+(NumberOfHistogramBins 16)
+(ErodeMask "false")
+// ******************** Multiresolution **********************
+(NumberOfResolutions 3)
+// ******************* Optimizer ****************************
+(MaximumNumberOfIterations 2000)
+// **************** Image sampling **********************
+(NumberOfSpatialSamples 2048)
+(NewSamplesEveryIteration "true")
+(ImageSampler "RandomCoordinate")
+// ************* Interpolation and Resampling ****************
+(BSplineInterpolationOrder 3)
+(FinalBSplineInterpolationOrder 0)
+//Default pixel value for pixels that come from outside the picture:
+(DefaultPixelValue 0)
+(WriteResultImage "true")
+// The pixel type and format of the resulting deformed moving image
+(ResultImagePixelType "short")
+(ResultImageFormat "tif")
