@@ -19,7 +19,9 @@ We recommend visual inspection of the denoising results at this point. It is pos
 The two arguments are Watershed segmentation parameters - intensity threshold and tolerance. You can vary them and inspect the results in the folder "overseg" which the script will create. The default values should be OK. You should look for an oversegmentation where a chromosome is roughly split into 10 chunks. To visualize the segmentations, load them in Fiji and apply a lookup table, e.g. "glasbey on dark".
 
 ## Segmentation
-6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction".
+6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction":
+
+python EMBEDSEG_predict.py
 
 ## Registration
 Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix registration and Voxelmorph registration.
