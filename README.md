@@ -21,7 +21,7 @@ We recommend visual inspection of the denoising results at this point. It is pos
 7. Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix registration and Voxelmorph registration.
 
 #### Elastix registration
-8. Run the script register_all.bat which invokes separate elastix commands for each pair of images. The results will be automatically saved in a folder called "results_pairs".
+8. Run the script register_pairs.bat which invokes separate elastix commands for each pair of images. The results will be automatically saved in a folder called "results_pairs".
 
 #### Voxelmorph registration
 No action is necessary here, the Voxelmorph model will be used at the next step - the tracking procedure.
