@@ -11,8 +11,10 @@ Facilitated Segmentation and Tracking of Chromosomes in Mitosis Pipeline
 #### Note: 
 We recommend visual inspection of the denoising results at this point. It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N and N2V, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
 
-## Resizing
-5. Now resize the restored images to shape (64, 256, 256), i.e. 256 pixels in XY and 64 planes in Z, again using Fiji's adjust size function. This is necessary for robust application of the segmentation model. Add these to a folder "resized".
+## Resizing and oversegmentation
+5. Now the restored images will be resized to match the dimensions of the trained segmentation model. We also need to perform an oversegmentation, to help with the tracking step later. To perform both actions, run the script "overseg_and_resize.py":
+   python overseg_and_resize.py 20 0.1
+   The two arguments are to the Watershed segmentation parameters - intensity threshold and tolerance. You can vary them and inspect the results in the folder "overseg" which the script will create. The default values should be OK. You should look for an oversegmentation where a chromosome is roughly split into 10 chunks.
 
 ## Segmentation
 6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction".
