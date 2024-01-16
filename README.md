@@ -16,7 +16,7 @@ We recommend visual inspection of the denoising results at this point. It is pos
    
    python overseg_and_resize.py 20 0.1
    
-The two arguments are to the Watershed segmentation parameters - intensity threshold and tolerance. You can vary them and inspect the results in the folder "overseg" which the script will create. The default values should be OK. You should look for an oversegmentation where a chromosome is roughly split into 10 chunks.
+The two arguments are Watershed segmentation parameters - intensity threshold and tolerance. You can vary them and inspect the results in the folder "overseg" which the script will create. The default values should be OK. You should look for an oversegmentation where a chromosome is roughly split into 10 chunks.
 
 ## Segmentation
 6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction".
