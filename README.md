@@ -8,6 +8,7 @@ Facilitated Segmentation and Tracking of Chromosomes in Mitosis Pipeline
 
 ## Denoising
 4. Run the CARE denoising prediction using the provided model, giving it the "separate" folder as input. Please save the denoised results in a folder "restored".
+Note: we recommend visual inspection of the denoising results at this point. It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N and N2V, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and skip the segmentation below (step 6).
 
 ## Resizing
 5. Now resize the restored images to shape (64, 256, 256), i.e. 256 pixels in XY and 64 planes in Z, again using Fiji's adjust size function. This is necessary for robust application of the segmentation model. Add these to a folder "resized".
