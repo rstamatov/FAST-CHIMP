@@ -22,16 +22,23 @@ The two arguments are Watershed segmentation parameters - intensity threshold an
 6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction".
 
 ## Registration
-7. Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix registration and Voxelmorph registration.
+Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix registration and Voxelmorph registration.
 
 #### Elastix registration
-8. Run the script register_pairs.bat which invokes separate elastix commands for each pair of images. The results will be automatically saved in a folder called "results_pairs".
+7. Create the registration batch file by running the script "affine_registration.py", giving it the first and last time points as arguments. For example:
+   
+   python affine_registration.py 1000 1200
+
+8. Run the script register_pairs.bat, generated automatically by the previous step. It invokes separate elastix commands for each pair of images. The results will be automatically saved in a folder called "results_pairs". This step is the most time consuming, it can take a few hours depending on the machine, and if you have hundreds of images.
 
 #### Voxelmorph registration
-No action is necessary here, the Voxelmorph model will be used at the next step - the tracking procedure.
+No action is necessary here, the Voxelmorph model will be used automatically at the next step - the tracking procedure.
+
+## Arranging registration files
+Run the script reorganize_affine_registrations.py
 
 ## Tracking
-9. Run the batch file propagate_all.bat. It uses the python script.
+10. Run the batch file propagate_all.bat. It uses the python script.
 
 ## Visualize results and perform manual corrections
 
