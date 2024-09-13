@@ -1,0 +1,1 @@
+{"foreground_weight": 108.87375700342129, "min_object_size": 5.0, "n_z": 64.0, "n_y": 256.0, "n_x": 256.0, "one_hot": false, "avg_background_intensity": 1.7939127630029743, "data_type": "16-bit", "pixel_size_x_microns": 0.05, "pixel_size_y_microns": 0.05, "pixel_size_z_microns": 0.18}
