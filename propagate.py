@@ -113,10 +113,12 @@ def parse_manual_corrections(segmented_folder, corrected_folder, start_t, end_t)
 
 ###########################################################################################################################
 
-def adjust_segmentation(t, transformed_segmentation, next_segmentation, merging_threshold, log = False, manual_correction = False, null_out = True):
+def adjust_segmentation(t, transformed_segmentation, next_segmentation, merging_threshold, embedseg = None, assigned = [], log = False, manual_correction = False, null_out = True):
     
     # Perform IoU analysis
     from collections import Counter
+
+    assigned = []
     
     # Read in the oversegmentation and get the list of labels, removing the background
     labels = list(np.unique(next_segmentation))
@@ -130,6 +132,20 @@ def adjust_segmentation(t, transformed_segmentation, next_segmentation, merging_
     
     # Find the most common color in each label
     for label in labels:
+
+
+        # if this label is completely contained in an already assigned embedseg label, do nothing
+        if embedseg is not None:
+          points_inside = list(embedseg[next_segmentation == label])
+          if np.max(points_inside) == 0:
+            continue
+        
+          points_inside = Counter([x for x in points_inside if x != 0])
+          best_color, count = points_inside.most_common()[0]
+          if count / np.sum(embedseg == best_color) > 0.8:
+            continue
+          
+        
         points_inside = list(transformed_segmentation[next_segmentation == label])
         if np.max(points_inside) == 0:
             continue
@@ -142,6 +158,8 @@ def adjust_segmentation(t, transformed_segmentation, next_segmentation, merging_
         count_2 = 0
         if len(points_inside.most_common()) == 1:
             result[next_segmentation == label] = best_color
+            assigned.append(label)
+
         else:
             # Find the second most common non-zero color
             second_color, count_2 = points_inside.most_common()[1]
@@ -155,12 +173,13 @@ def adjust_segmentation(t, transformed_segmentation, next_segmentation, merging_
             # how big is the second object?
             if count / (count + count_2) > merging_threshold:
                 result[next_segmentation == label] = best_color
+                assigned.append(label)
                 num_merged += 1
 
     if null_out:
         result[next_segmentation == 0] = 0
     
-    return result
+    return result, assigned
 
 ###########################################################################################################################
 
@@ -252,12 +271,13 @@ def propagate_one_step(vxm_model, t, direction, manual_changes, initial_image = 
     
     # Load the next segmented image
     next_embedseg = imread("results/inference/predictions/t" + str(next_time_point) + ".tif")
-    result = adjust_segmentation(t, result, next_embedseg, 0.95, log = True, manual_correction = False, null_out = False)
+    result, assigned = adjust_segmentation(t, result, next_embedseg, 0.8, log = True, manual_correction = False, null_out = False)
 
     # Load the next segmented image
     next_segmentation = imread("results/overseg_fine/t" + str(next_time_point) + ".tif")
-    result = transformed_segmentation
-    result = adjust_segmentation(t, result, next_segmentation, 0.0)
+
+    #imsave("temp/t" + str(t) + ".tif", result, imagej = True)
+    result, _ = adjust_segmentation(t, result, next_segmentation, 0.0, embedseg = next_embedseg, assigned = assigned)
 
     result = integrate_manual_corrections(result, next_time_point, manual_changes)
                                           
