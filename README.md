@@ -1,13 +1,14 @@
-#FAST-CHIMP
-Overview
+# FAST-CHIMP
+## Overview
 The FAST-CHIMP acronym stands for FAcilitated Segmentation and Tracking of CHromosomes In Mitosis Pipeline. It consists of a set of software tools which perform denoising, segmentation, registration and tracking. It starts with a raw hyperstack of a 3D+T time lapse and results in assigning each chromosome a unique integer value (its segmentation label), which is consistent over time. Please refer to the main text for detailed discussion on what imaging conditions must be used to obtain data with sufficient quality to benefit from this method. 
 Briefly, we recommend acquiring super-resolution images with pixel size no more than 100 nm in XY, 200 nm in Z, and 10 seconds temporal resolution. The temporal resolution is the most critical parameter – 10 seconds is the absolute maximum, given the speed of mitotic chromosomes to allow for successful registration. Closer to 5 seconds is even more optimal and will result in much less manual corrections later.
 
-Installation
+## Installation
 The following python packages are required and should be installed via pip or anaconda:
 numpy scipy tifffile scikit-image networkx tensorflow csbdeep embedseg voxelmorph itk-elastix aicsimageio aicspylibczi  
 Download and extract the FAST-CHIMP folder to a single location.
-Usage
+
+## Usage
 The pipeline consists of eight steps. To avoid the brittleness inherent in modular programs, we designed each step independent of the others, except for the necessary input from previous steps. It is important to verify the output of each step and the availability of the input before each subsequent step to avoid unexpected behavior and to pinpoint the exact cause of potential errors. Ideally, one would look at the generated intermediate data in Fiji or another visualization software. All such intermediate data will be generated as subfolders of the “results” folder. 
 Once the pipeline has been successfully run on your setup, it can be automated by modifying the batch.bat file with the correct folder locations. Running this batch will execute all steps without interruption. Still, we strongly recommend running the steps individually and verifying the output of each.
 We list the commands below with brief comments and then explain each step in more detail.
@@ -44,7 +45,7 @@ After step 7, it is usually necessary to perform manual corrections on the first
 Replication on sample data
 We provide 5 example images in the folder results/separate/. They are already resized and pixel-size-adjusted, so you can proceed directly with step 2 (denoising).
 
-Detailed explanation of the steps in FAST-CHIMP
+## Detailed explanation of the steps in FAST-CHIMP
 
 1.	Data preprocessing 
 The command for this step is
