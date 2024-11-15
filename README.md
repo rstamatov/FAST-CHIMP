@@ -26,7 +26,7 @@ Alternatively, open the tubeness.ijm in ImageJ and modify the location argument.
 4.	Resizing the denoised images and generating oversegmentation (the two parameters specify the watershed tolerance and intensity threshold):
 python overseg_and_resize.py 0.01 0.1
 
-![summary](fig.S1.jpg)
+![summary]((https://github.com/rstamatov/FAST-CHIMP/blob/main/fig.S1.jpg?raw=true))
 5.	Segmentation using the trained Embedseg4 model:
 python EMBEDSEG_predict.py
 
