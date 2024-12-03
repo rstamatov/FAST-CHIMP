@@ -13,7 +13,7 @@ Download and extract the FAST-CHIMP folder to a single location.
 The pipeline consists of eight steps. To avoid the brittleness inherent in modular programs, we designed each step independent of the others, except for the necessary input from previous steps. It is important to verify the output of each step and the availability of the input before each subsequent step to avoid unexpected behavior and to pinpoint the exact cause of potential errors. Ideally, one would look at the generated intermediate data in Fiji or another visualization software. All such intermediate data will be generated as subfolders of the “results” folder. 
 Once the pipeline has been successfully run on your setup, it can be automated by modifying the batch.bat file with the correct folder locations. Running this batch will execute all steps without interruption. Still, we strongly recommend running the steps individually and verifying the output of each.
 We list the commands below with brief comments and then explain each step in more detail.
-1.	Data preprocessing adjusting for dimensions and pixel size (pixel sizes are in nanometers, numbers given as examples):
+1.	Data preprocessing adjusting for dimensions and pixel size (pixel sizes are in micrometers, numbers given as examples):
 
 python TiffToStacks.py -filename "path/to/experiment.tif" -pixel_size 0.05 -pixel_size_z 0.17
 
