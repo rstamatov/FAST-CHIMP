@@ -49,7 +49,8 @@ python propagate.py start_t end_t
 where start_t and end_t are the initial and final time points. Notice that by default time points start from 1000 (see below). 
 After step 7, it is usually necessary to perform manual corrections on the first frame (the one to be propagated over time) before propagation, to avoid tracking the errors.
 
-Replication on sample data
+## Replication on sample data
+
 We provide 5 example images in the folder results/separate/. They are already resized and pixel-size-adjusted, so you can proceed directly with step 2 (denoising).
 
 ## Detailed explanation of the steps in FAST-CHIMP
