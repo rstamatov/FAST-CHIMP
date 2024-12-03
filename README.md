@@ -65,7 +65,7 @@ Pixel size in XY: 0.05 µm; Pixel size in Z: 0.18 µm; Dimensions: 120 Z planes,
 
 An alternative to using this script is to do the resizing manually in Fiji using the commands “adjust size” to change the pixels size and “adjust canvass size” to change the size without affecting the resolution.
 2.	Denoising
-Run the CARE1 denoising prediction using the provided model by running the script "CARE_denoising.py":
+Run the CARE denoising prediction using the provided model by running the script "CARE_denoising.py":
 python CARE_denoising.py
 It will operate on all image stacks in the results/separate folder and the output will appear in a new folder named "restored". System-specific configurations might be necessary if you want to enable the GPU on your machine and run CARE on the GPU. A single image stack with dimensions (120 x 660 x 600) takes a few seconds using the GPU, and up to a minute using the CPU.
 We recommend visual inspection of the denoising results at this point (Fig. S1b). It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N2 and N2V3, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
@@ -86,7 +86,7 @@ The typical run time of this script is 10 seconds per (120 x 600 x 600) image st
 
 Fig. S1 | Expected results at different processing steps. Maximum intensity projections of all Z planes. (a) Raw images, one per time point, produced in results/separate. (b) Denoised images, located in results/restored. (c) Result of the tubeness filter, will be available in results/tubeness. (d) Oversegmentation – will be in results/overseg and results/overseg_fine. (e) Output of the segmentation algorithm – in results/inference/prediction. (f) After tracking, each time point will adopt the colors of the first in the sequence, hence the different appearance from (e).  
 5.	Segmentation
-6. Apply the provided Embedseg4 model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction" (Fig. S1e):
+6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction" (Fig. S1e):
 python EMBEDSEG_predict.py
 The Embedseg prediction takes ~5 seconds per image on a GPU, and up to a minute on the CPU.
 6.	Refining segmentation labels
