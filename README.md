@@ -55,7 +55,8 @@ We provide 5 example images in the folder results/separate/. They are already re
 
 ## Detailed explanation of the steps in FAST-CHIMP
 
-1.	Data preprocessing 
+1.	Data preprocessing
+
 The command for this step is
 
 python TiffToStacks.py -filename "path/to/experiment.tif" -pixel_size <pixel size in XY>  -pixel_size_z <pixel size in Z>
@@ -65,13 +66,16 @@ This script has two goals. First, to split the input 4D hyperstack into a sequen
 Pixel size in XY: 0.05 µm; Pixel size in Z: 0.18 µm; Dimensions: 120 Z planes, 600 x 600 pixels.
 
 An alternative to using this script is to do the resizing manually in Fiji using the commands “adjust size” to change the pixels size and “adjust canvass size” to change the size without affecting the resolution.
+
 2.	Denoising
+
 Run the CARE denoising prediction using the provided model by running the script "CARE_denoising.py":
 python CARE_denoising.py
 It will operate on all image stacks in the results/separate folder and the output will appear in a new folder named "restored". System-specific configurations might be necessary if you want to enable the GPU on your machine and run CARE on the GPU. A single image stack with dimensions (120 x 660 x 600) takes a few seconds using the GPU, and up to a minute using the CPU.
 We recommend visual inspection of the denoising results at this point (Fig. S1b). It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N2 and N2V3, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
 
 3.	Tubeness filter
+   
 This standard filter enhances tubular structures and is especially useful for chromosomes (Fig. S1c). FAST-CHIMP uses the tubeness results only as a structural skeleton – after segmentation, all signal outside the tubeness structures is zeroed out. This results in more realistic and visually appealing segmentation masks. This step is implemented as a Fiji macro:
 "/path/to/Fiji/ImageJ-win64.exe" -macro tubeness.ijm ,”/path/to/current/directory”
 Alternatively, open the tubeness.ijm in ImageJ and modify the location argument.
@@ -86,11 +90,15 @@ The typical run time of this script is 10 seconds per (120 x 600 x 600) image st
 ![fig  S1](https://github.com/user-attachments/assets/6246dc22-1754-431e-abb3-8eb533d169d2)
 
 Fig. S1 | Expected results at different processing steps. Maximum intensity projections of all Z planes. (a) Raw images, one per time point, produced in results/separate. (b) Denoised images, located in results/restored. (c) Result of the tubeness filter, will be available in results/tubeness. (d) Oversegmentation – will be in results/overseg and results/overseg_fine. (e) Output of the segmentation algorithm – in results/inference/prediction. (f) After tracking, each time point will adopt the colors of the first in the sequence, hence the different appearance from (e).  
+
 5.	Segmentation
-6. Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction" (Fig. S1e):
+  
+Apply the provided Embedseg model on the images in the "resized" folder. The model will place the segmentations in a folder "inference/prediction" (Fig. S1e):
 python EMBEDSEG_predict.py
 The Embedseg prediction takes ~5 seconds per image on a GPU, and up to a minute on the CPU.
+
 6.	Refining segmentation labels
+
 Sometimes the Embedseg prediction misses a segment completely due to insufficient probability of that segment to be classified as a mask. This issue is solved by juxtaposing the Embedseg masks to the oversegmentation masks. Each oversegmentation chunk which has no Embedseg counterpart is added as a new label to the Embedseg result. The command is as follows.
 python refine_embedseg.py
 It modifies the files in results/inference/predictions in place. The way to verify this step is to open a prediction along its raw (or denoised) counterpart in Fiji and overlay them, ensuring that all raw signal overlaps the segmentation. 
@@ -98,6 +106,7 @@ Registration
 Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix5 registration and Voxelmorph6 registration.
 
 7.	Affine registration
+
 Tracking of the chromosomes relies on pairwise registration – computing the displacement of each pixel form image t needed to match image t+1. Having computed these so-called deformation fields between each successive image pairs allows to take the first segmentation in the sequence and iteratively transform it over time to match each time point. 
 Registration is computed using the denoised images, and the resulting deformation fields are then applied on the segmentation masks.
 We use Voxelmorph for pairwise registration in a later step. It works on pairs of images which are already roughly aligned, so as a pre-processing step we perform affine registration (consisting of only translation, scale and shear) as follows:
@@ -105,6 +114,7 @@ python simple_elastix_register_pairs.py
 The output will be generated in results/results_pairs. Inside, there will be a subfolder for each time point, containing the file TransofmParameters.0.txt. Please verify this before proceeding.
 
 8.	Tracking (propagation of the first segmentation over time):
+
 The command is
 python propagate.py start_t end_t
 
