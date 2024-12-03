@@ -5,6 +5,7 @@ Briefly, we recommend acquiring super-resolution images with pixel size no more 
 
 ## Installation
 The following python packages are required and should be installed via pip or anaconda:
+
 numpy scipy tifffile scikit-image networkx tensorflow csbdeep embedseg voxelmorph itk-elastix aicsimageio aicspylibczi  
 Download and extract the FAST-CHIMP folder to a single location.
 
@@ -16,7 +17,7 @@ We list the commands below with brief comments and then explain each step in mor
 
 python TiffToStacks.py -filename "path/to/experiment.tif" -pixel_size 0.05 -pixel_size_z 0.17
 
-2.	CARE1 denoising using the trained model:
+2.	CARE denoising using the trained model:
 python CARE_denoising.py
 
 3.	Tubeness filter:
