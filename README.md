@@ -18,25 +18,32 @@ We list the commands below with brief comments and then explain each step in mor
 python TiffToStacks.py -filename "path/to/experiment.tif" -pixel_size 0.05 -pixel_size_z 0.17
 
 2.	CARE denoising using the trained model:
+3.	
 python CARE_denoising.py
 
-3.	Tubeness filter:
+4.	Tubeness filter:
 "/path/to/Fiji/ImageJ-win64.exe" -macro tubeness.ijm ,”/path/to/current/directory”
+
 Alternatively, open the tubeness.ijm in ImageJ and modify the location argument.
 
-4.	Resizing the denoised images and generating oversegmentation (the two parameters specify the watershed tolerance and intensity threshold):
+6.	Resizing the denoised images and generating oversegmentation (the two parameters specify the watershed tolerance and intensity threshold):
+7.	
 python overseg_and_resize.py 0.01 0.1
 
-5.	Segmentation using the trained Embedseg model:
+8.	Segmentation using the trained Embedseg model:
+9.	
 python EMBEDSEG_predict.py
 
-6.	Post-processing of segmentation labels to handle missing pieces:
+10.	Post-processing of segmentation labels to handle missing pieces:
+11.	
 python refine_embedseg.py
 
-7.	Affine registration of each 3D image relative to the next in the time series:
+12.	Affine registration of each 3D image relative to the next in the time series:
+13.	
 python simple_elastix_register_pairs.py
 
-8.	Tracking (propagation of the first segmentation over time):
+14.	Tracking (propagation of the first segmentation over time):
+15.	
 python propagate.py start_t end_t
 
 where start_t and end_t are the initial and final time points. Notice that by default time points start from 1000 (see below). 
