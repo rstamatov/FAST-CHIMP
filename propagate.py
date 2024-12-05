@@ -304,7 +304,10 @@ if __name__ == "__main__":
 
 
     try:
-        copyfile(initial_location + "/t" + str(start_t) + ".tif", "results/propagated/t" + str(start_t) + ".tif")
+        if direction == "forward":
+          copyfile(initial_location + "/t" + str(start_t) + ".tif", "results/propagated/t" + str(start_t) + ".tif")
+        else:
+          copyfile(initial_location + "/t" + str(end_t) + ".tif", "results/propagated/t" + str(end_t) + ".tif")
     except SameFileError:
         pass
         
