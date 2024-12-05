@@ -249,8 +249,13 @@ def propagate_one_step(vxm_model, t, direction, manual_changes, initial_image = 
     transformed_segmentation = transformix_object.GetOutput()
 
     # Transform via the VXM model
-    moving_image = np.load("results/npz/t" + str(t) + "_forward.npz")['arr_0'] 
-    fixed_image = np.load("results/npz/t" + str(t+1) + ".npz")['arr_0']
+
+    if direction == "forward":
+      moving_image = np.load("results/npz/t" + str(t) + "_forward.npz")['arr_0'] 
+      fixed_image = np.load("results/npz/t" + str(t+1) + ".npz")['arr_0']
+    else:
+      moving_image = np.load("results/npz/t" + str(t) + "_backward.npz")['arr_0'] 
+      fixed_image = np.load("results/npz/t" + str(t-1) + ".npz")['arr_0']
       
     moving_image = moving_image.astype('float') / np.max(moving_image.astype('float'))
     fixed_image = fixed_image.astype('float') / np.max(fixed_image.astype('float'))
