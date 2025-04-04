@@ -2,7 +2,7 @@ set working_directory="D:/Rumen/FAST-CHIMP/"
 set start_t=1000
 set end_t=1200
 
-python TiffToStacks.py -filename "D:/Rumen/FISH chr 2/Experiment-484-Airyscan Processing-01.czi" -pixel_size 0.0425525 -pixel_size_z
+python TiffToStacks.py -filename "D:/Rumen/FISH chr 2/Experiment-484-Airyscan Processing-01.czi" -pixel_size 0.0425525 -pixel_size_z 0.17
 
 python CARE_denoising.py
 
