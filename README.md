@@ -1,6 +1,10 @@
 # FAST-CHIMP
 ## Overview
-The FAST-CHIMP acronym stands for FAcilitated Segmentation and Tracking of CHromosomes In Mitosis Pipeline. It consists of a set of software tools which perform denoising, segmentation, registration and tracking. It starts with a raw hyperstack of a 3D+T time lapse and results in assigning each chromosome a unique integer value (its segmentation label), which is consistent over time. In the article (coming soon) there will be detailed discussion on what imaging conditions must be used to obtain data with sufficient quality to benefit from this method. 
+The FAST-CHIMP acronym stands for FAcilitated Segmentation and Tracking of CHromosomes In Mitosis Pipeline. It consists of a set of software tools which perform denoising, segmentation, registration and tracking:
+
+https://www.nature.com/articles/s41556-025-01637-6
+
+It starts with a raw hyperstack of a 3D+T time lapse and results in assigning each chromosome a unique integer value (its segmentation label), which is consistent over time. In the article (coming soon) there will be detailed discussion on what imaging conditions must be used to obtain data with sufficient quality to benefit from this method. 
 Briefly, we recommend acquiring super-resolution images with pixel size no more than 100 nm in XY, 200 nm in Z, and 10 seconds temporal resolution. The temporal resolution is the most critical parameter – 10 seconds is the absolute maximum, given the speed of mitotic chromosomes to allow for successful registration. Closer to 5 seconds is even more optimal and will result in much less manual corrections later.
 
 ## Installation
