@@ -1,17 +1,14 @@
-
-
 import numpy as np
-from tifffile import imsave, imread
-
-from EmbedSeg.utils.create_dicts import create_test_configs_dict
-from EmbedSeg.test import begin_evaluating
-from glob import glob
-
-from EmbedSeg.utils.visualize import visualize
+import torch
+from tifffile import imread, imwrite
 import os
-import numpy as np
+import erfnet
+from Net_3d import *
+from utils import Cluster_3d
+from test_time_augmentation import apply_tta_3d
+from tqdm import tqdm
 
-import json
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def normalize(file_location):
     all_filenames = list(os.listdir(file_location))
@@ -19,70 +16,73 @@ def normalize(file_location):
     for filename in all_filenames:
         img = imread(file_location + "/" + filename)
         img = 255.0 * img / np.max(img)
-        imsave(file_location + "/" + filename, img)
+        imwrite(file_location + "/" + filename, img)
 
 
+if not os.path.exists("results/inference"):
+    os.mkdir("results/inference")
+if not os.path.exists("results/inference/predictions"):
+    os.mkdir("results/inference/predictions")
    
 data_dir = os.getcwd()
 data_dir = data_dir.replace(os.sep, '/')
 data_dir = data_dir + "/"
 print (data_dir)
+
+model_path = data_dir + '/segmentation models/full_model/best_iou_model.pth'
+
 project_name = 'results/resized/'
 
 normalize(data_dir + project_name + "/test/images/")
 
-print("Evaluation images shall be read from: {}".format(os.path.join(data_dir, project_name)))
+checkpoint = torch.load(model_path)
+model = BranchedERFNet_3d(num_classes=[6, 1], input_channels=1).to(device)  # Adjust num_classes and input_channels as needed
 
-# use the following for the pretrained model weights
-checkpoint_path = data_dir + '/segmentation models/full_model/checkpoint.pth'
-if os.path.isfile(data_dir + 'segmentation models//data_properties.json'): 
-    with open(data_dir + 'segmentation models/data_properties.json') as json_file:
-        data = json.load(json_file)
-        one_hot = data['one_hot']
-        data_type = data['data_type']
-        min_object_size = int(data['min_object_size'])
-        foreground_weight = float(data['foreground_weight'])
-        n_z, n_y, n_x = int(data['n_z']),int(data['n_y']), int(data['n_x'])
-        pixel_size_z_microns, pixel_size_y_microns, pixel_size_x_microns = float(data['pixel_size_z_microns']), float(data['pixel_size_y_microns']), float(data['pixel_size_x_microns']) 
-        #mask_start_x, mask_start_y, mask_start_z = int(data['mask_start_x']), int(data['mask_start_y']), int(data['mask_start_z'])  
-        #mask_end_x, mask_end_y, mask_end_z = int(data['mask_end_x']), int(data['mask_end_y']), int(data['mask_end_z']) 
-        avg_background_intensity = float(data['avg_background_intensity'])
+new_state_dict = {}
+for key, value in checkpoint['model_state_dict'].items():
+    # Remove the 'module.' prefix
+    new_key = key.replace('module.', '')
+    new_state_dict[new_key] = value
 
+model.load_state_dict(new_state_dict, strict = True)
+#model.eval()
 
+cluster = Cluster_3d(grid_z = 64, grid_y = 256, grid_x = 256,
+                     pixel_z = 0.5823, pixel_y = 1, pixel_x = 1, device = device)
 
-tta = True
-ap_val = 0.5
-seed_thresh = 0.0
-save_dir = 'results/inference'
-save_images = True
-save_results = True
-normalization_factor = 255 #256 #65535 if data_type=='16-bit' else 255
-mask_intensity = avg_background_intensity/normalization_factor
-print (min_object_size)
+file_location = data_dir + project_name + "/test/images/"
 
-if os.path.exists(checkpoint_path):
-    print("Trained model weights found at : {}".format(checkpoint_path))
-else:
-    print("Trained model weights were not found at the specified location!")
+all_filenames = list(os.listdir(file_location))
 
+for filename in all_filenames:
+    img = imread(file_location + "/" + filename)
 
-test_configs = create_test_configs_dict(data_dir = os.path.join(data_dir, project_name),
-                                        checkpoint_path = checkpoint_path,
-                                        tta = tta, 
-                                        ap_val = ap_val,
-                                        seed_thresh = seed_thresh, 
-                                        min_object_size = min_object_size, 
-                                        save_images = save_images,
-                                        save_results = save_results,
-                                        save_dir = save_dir,
-                                        normalization_factor = normalization_factor,
-                                        one_hot = one_hot,
-                                        n_z = n_z,
-                                        n_y = n_y,
-                                        n_x = n_x,
-                                        anisotropy_factor = pixel_size_z_microns/pixel_size_x_microns,
-                                        name = '3d'
-                                        )
+    input_tensor = torch.from_numpy(img).float().to(device)
+    input_tensor = input_tensor.unsqueeze(0).unsqueeze(0)
+    input_tensor = input_tensor
+
+    for iter in tqdm(range(16), position=0, leave=True):
+        if iter == 0:
+            output_average = apply_tta_3d(input_tensor, model, iter)
+        else:
+            output_average = (
+                1
+                / (iter + 1)
+                * (output_average * iter + apply_tta_3d(input_tensor, model, iter))
+            )  # iter
+    output = torch.from_numpy(output_average).float().to(device)
+    
+    instance_map = cluster.cluster_local_maxima(
+                output[0],
+                n_sigma = 3,
+                fg_thresh = 0.9,
+                min_mask_sum = 0,
+                min_unclustered_sum = 0,
+                min_object_size = 1,
+            )
+
+    imwrite("results/inference/predictions/" + filename,
+           instance_map.cpu().detach().numpy().astype(np.uint16))
+    
 
 
-begin_evaluating(test_configs, verbose = False, mask_region = None, mask_intensity = mask_intensity, avg_bg = avg_background_intensity/normalization_factor)
