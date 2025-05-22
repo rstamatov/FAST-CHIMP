@@ -1,6 +1,6 @@
 import numpy as np
 
-from tifffile import imread, imsave
+from tifffile import imread, imwrite
 
 import os
 from scipy.ndimage import zoom
@@ -103,13 +103,13 @@ for f in all_files:
     tube = imread("results/tubeness/t" + str(t) + ".tif")
 
     img = resize(img)
-    imsave("results/resized/test/images/t" + str(t) + ".tif", img)
+    imwrite("results/resized/test/images/t" + str(t) + ".tif", img)
     
     tube = resize(tube)
     img[tube < intensity_threshold] = 0
   
     watershed_result = watershed_oversegmentation(t, img, tube, intensity_threshold, watershed_tolerance)
-    imsave("results/overseg/t" + str(t) + ".tif", watershed_result)
+    imwrite("results/overseg/t" + str(t) + ".tif", watershed_result)
 
     # Split the oversegmented chunks further
     result = np.copy(watershed_result)
@@ -176,7 +176,7 @@ for f in all_files:
 
         watershed_result = result
         
-    imsave("results/overseg_fine/t" + str(t) + ".tif", watershed_result)
+    imwrite("results/overseg_fine/t" + str(t) + ".tif", watershed_result)
     
 
 

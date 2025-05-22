@@ -470,7 +470,7 @@ class Cluster_3d:
         zeros = np.zeros((coords.shape[0], 1), dtype=np.uint8)
         coords = np.hstack((zeros, coords))
 
-        mask_local_max_cpu = np.zeros(seed_map_cpu.shape, dtype=np.bool)
+        mask_local_max_cpu = np.zeros(seed_map_cpu.shape, dtype=bool)
         mask_local_max_cpu[tuple(coords.T)] = True
         mask_local_max = torch.from_numpy(mask_local_max_cpu).bool().to(self.device)
 
@@ -721,7 +721,7 @@ class Cluster:
         zeros = np.zeros((coords.shape[0], 1), dtype=np.uint8)
         coords = np.hstack((zeros, coords))
 
-        mask_local_max_cpu = np.zeros(seed_map_cpu.shape, dtype=np.bool)
+        mask_local_max_cpu = np.zeros(seed_map_cpu.shape, dtype=bool)
         mask_local_max_cpu[tuple(coords.T)] = True
         mask_local_max = torch.from_numpy(mask_local_max_cpu).bool().to(self.device)
 

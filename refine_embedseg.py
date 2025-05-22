@@ -1,5 +1,5 @@
 import numpy as np
-from tifffile import imread, imsave
+from tifffile import imread, imwrite
 from collections import Counter
 import os
 
@@ -40,4 +40,4 @@ for f in filenames:
     oversegmentation = imread("results/overseg/" + f)
     result = refine(segmentation, oversegmentation)
     result = np.array(result, dtype = np.float32)
-    imsave("results/inference/predictions/" + f, result, imagej = True)
+    imwrite("results/inference/predictions/" + f, result, imagej = True)

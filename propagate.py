@@ -1,5 +1,5 @@
 
-from tifffile import imread, imsave
+from tifffile import imread, imwrite
 import numpy as np
 
 import tensorflow as tf
@@ -269,7 +269,7 @@ def propagate_one_step(vxm_model, t, direction, manual_changes, initial_image = 
     transformed_segmentation = vxm.networks.Transform(inshape, interp_method = 'nearest').predict([transformed_segmentation[np.newaxis,..., np.newaxis], flow])
    
     # Save the transformed image
-    imsave("temp/t" + str(t) + ".tif", transformed_segmentation)
+    imwrite("temp/t" + str(t) + ".tif", transformed_segmentation)
 
     transformed_segmentation = np.squeeze(transformed_segmentation)
     result = transformed_segmentation
@@ -281,12 +281,12 @@ def propagate_one_step(vxm_model, t, direction, manual_changes, initial_image = 
     # Load the next segmented image
     next_segmentation = imread("results/overseg_fine/t" + str(next_time_point) + ".tif")
 
-    #imsave("temp/t" + str(t) + ".tif", result, imagej = True)
+    #imwrite("temp/t" + str(t) + ".tif", result, imagej = True)
     result, _ = adjust_segmentation(t, result, next_segmentation, 0.0, embedseg = next_embedseg, assigned = assigned)
 
     result = integrate_manual_corrections(result, next_time_point, manual_changes)
                                           
-    imsave("results/propagated/t" + str(next_time_point) + ".tif", result)
+    imwrite("results/propagated/t" + str(next_time_point) + ".tif", result)
 
 ###########################################################################################################################
         

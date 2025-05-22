@@ -1,7 +1,7 @@
 #from __future__ import print_function, unicode_literals, absolute_import, division
 import numpy as np
 #import matplotlib.pyplot as plt
-from tifffile import imread, imsave
+from tifffile import imread, imwrite
 #from csbdeep.utils import axes_dict, plot_some, plot_history
 #from csbdeep.utils.tf import limit_gpu_memory
 #from csbdeep.io import load_training_data
@@ -56,7 +56,7 @@ for f in all_files:
 
     t = int(f[-8:-4])
 
-    imsave(output_file_location + "/" + f, change_bit_depth(restored))
+    imwrite(output_file_location + "/" + f, change_bit_depth(restored))
     #np.savez_compressed(output_file_location + "/" + f, restored)
 
 

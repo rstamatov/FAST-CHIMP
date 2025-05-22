@@ -1,8 +1,7 @@
-# pip install aicsimageio
-# pip install aicspylibczi
-from aicsimageio import AICSImage
+# pip install czifile
+import czifile
 import numpy as np
-from tifffile import imsave
+from tifffile import imwrite, TiffFile
 import os
 from scipy.ndimage import zoom
 
@@ -89,16 +88,44 @@ if not os.path.exists("results/separate"):
 
 previous_end = 0
 for filename in parsed_args["filename"]:
+
+    # Determine file extension
+    file_ext = os.path.splitext(filename)[-1].lower()
+
+    if file_ext == ".czi":
+
+        with czifile.CziFile(filename) as czi:
+            # Read the image data
+            img = czi.asarray()
+            
+            # Assuming time dimension is the first dimension
+            print (img.shape)
+            numT, numC, numZ, height, width, _ = img.shape
+
+            for current_t in range(0, numT):
+
+                print (current_t)
+                current = np.squeeze(img[current_t, :, :, :, :, :])
+                current = crop_to_target_size(current, parsed_args["pixel_size"], parsed_args["pixel_size_z"])
+                imwrite("results/separate/t" + str(1000 + previous_end + current_t) + ".tif", current)
+
+    elif file_ext in [".tif", ".tiff"]:
+        with TiffFile(filename) as tif:
+            # Read all images in the tif file
+            images = tif.asarray()
+            
+            # Assuming time dimension is the first dimension for series
+            numT = images.shape[0]
+
+            for current_t in range(numT):
+                print (current_t)
+                current = images[current_t]
+                current = crop_to_target_size(current, parsed_args["pixel_size"], parsed_args["pixel_size_z"])
+                imwrite("results/separate/t" + str(1000 + previous_end + current_t) + ".tif", current)
     
-    img = AICSImage(filename)
-    numT = img.dims["T"][0]
-
-    for current_t in range(0, numT):
-
-        print (current_t)
-        current = np.squeeze( img.get_image_dask_data("CZYX", T = current_t))
-        current = crop_to_target_size(current, parsed_args["pixel_size"], parsed_args["pixel_size_z"])
-        imsave("results/separate/t" + str(1000 + previous_end + current_t) + ".tif", current)
+    else:
+        raise ValueError("Unsupported file format: Use .czi or .tif/.tiff files.")
+        
 
     previous_end += numT
 
