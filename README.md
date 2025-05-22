@@ -11,6 +11,7 @@ Briefly, we recommend acquiring super-resolution images with pixel size no more 
 The following python packages are required and should be installed via pip or anaconda:
 
 numpy scipy tifffile czifile scikit-image networkx tensorflow csbdeep voxelmorph itk-elastix
+
 Download and extract the FAST-CHIMP folder to a single location.
 
 ## Usage
@@ -76,7 +77,7 @@ An alternative to using this script is to do the resizing manually in Fiji using
 Run the CARE denoising prediction using the provided model by running the script "CARE_denoising.py":
 python CARE_denoising.py
 It will operate on all image stacks in the results/separate folder and the output will appear in a new folder named "restored". System-specific configurations might be necessary if you want to enable the GPU on your machine and run CARE on the GPU. A single image stack with dimensions (120 x 660 x 600) takes a few seconds using the GPU, and up to a minute using the CPU.
-We recommend visual inspection of the denoising results at this point (Fig. S1b). It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N2 and N2V3, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
+We recommend visual inspection of the denoising results at this point (Fig. S1b). It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N and N2V, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
 
 3.	Tubeness filter
    
