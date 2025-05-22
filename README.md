@@ -10,7 +10,7 @@ Briefly, we recommend acquiring super-resolution images with pixel size no more 
 ## Installation
 The following python packages are required and should be installed via pip or anaconda:
 
-numpy scipy tifffile scikit-image networkx tensorflow csbdeep embedseg voxelmorph itk-elastix aicsimageio aicspylibczi  
+numpy scipy tifffile czifile scikit-image networkx tensorflow csbdeep voxelmorph itk-elastix
 Download and extract the FAST-CHIMP folder to a single location.
 
 ## Usage
@@ -65,7 +65,7 @@ The command for this step is
 
 python TiffToStacks.py -filename "path/to/experiment.tif" -pixel_size <pixel size in XY>  -pixel_size_z <pixel size in Z>
 
-This script has two goals. First, to split the input 4D hyperstack into a sequence of 3D stacks, one for each time point, which will be available in the folder results/separate (Fig. S1a). The script automatically numbers the stacks, starting with t1000.tif. For example, t1112.tif and t1113.tif are two separate 3D stacks, adjacent in time. Second, the script aims to resize the data to match the dimensions of the training data as closely as possible. This is critical if you want to use the pre-trained models for denoising, segmentation and registration. We found that these models perform reasonably well with a wide array of imaging conditions and different cell lines but only as long as the data have the same pixel size and dimensions as the training data:
+The input file can be .tif, .tiff, or .czi. This script has two goals. First, to split the input 4D hyperstack into a sequence of 3D stacks, one for each time point, which will be available in the folder results/separate (Fig. S1a). The script automatically numbers the stacks, starting with t1000.tif. For example, t1112.tif and t1113.tif are two separate 3D stacks, adjacent in time. Second, the script aims to resize the data to match the dimensions of the training data as closely as possible. This is critical if you want to use the pre-trained models for denoising, segmentation and registration. We found that these models perform reasonably well with a wide array of imaging conditions and different cell lines but only as long as the data have the same pixel size and dimensions as the training data:
 
 Pixel size in XY: 0.05 µm; Pixel size in Z: 0.18 µm; Dimensions: 120 Z planes, 600 x 600 pixels.
 
