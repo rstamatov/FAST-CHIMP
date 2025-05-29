@@ -35,7 +35,7 @@ project_name = 'results/resized/'
 
 normalize(data_dir + project_name + "/test/images/")
 
-checkpoint = torch.load(model_path)
+checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
 model = BranchedERFNet_3d(num_classes=[6, 1], input_channels=1).to(device)  # Adjust num_classes and input_channels as needed
 
 new_state_dict = {}
