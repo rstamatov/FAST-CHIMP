@@ -75,7 +75,9 @@ An alternative to using this script is to do the resizing manually in Fiji using
 2.	Denoising
 
 Run the CARE denoising prediction using the provided model by running the script "CARE_denoising.py":
+
 python CARE_denoising.py
+
 It will operate on all image stacks in the results/separate folder and the output will appear in a new folder named "restored". System-specific configurations might be necessary if you want to enable the GPU on your machine and run CARE on the GPU. A single image stack with dimensions (120 x 660 x 600) takes a few seconds using the GPU, and up to a minute using the CPU.
 We recommend visual inspection of the denoising results at this point (Fig. S1b). It is possible that very different experimental conditions will make the provided denoising model inaccurate. In this case, you can train your own CARE model. Alternatively, you can try other denoising methods, such as N2N and N2V, or simply use the raw images, without denoising. In the latter case, just rename the folder "separate" to "restored" and proceed.
 
@@ -111,9 +113,13 @@ The Embedseg prediction takes ~5 seconds per image on a GPU, and up to a minute 
 6.	Refining segmentation labels
 
 Sometimes the Embedseg prediction misses a segment completely due to insufficient probability of that segment to be classified as a mask. This issue is solved by juxtaposing the Embedseg masks to the oversegmentation masks. Each oversegmentation chunk which has no Embedseg counterpart is added as a new label to the Embedseg result. The command is as follows.
+
 python refine_embedseg.py
+
 It modifies the files in results/inference/predictions in place. The way to verify this step is to open a prediction along its raw (or denoised) counterpart in Fiji and overlay them, ensuring that all raw signal overlaps the segmentation. 
+
 Registration
+
 Pairwise registration is necessary for propagating the segmentation labels over time. Two substeps are necessary: elastix5 registration and Voxelmorph6 registration.
 
 7.	Affine registration
@@ -135,5 +141,7 @@ python propagate.py start_t end_t
 where start_t and end_t are the initial and final time points. Note that by default, time points start from 1000. 
 This script will now use the results computed in all previous steps to propagate the segmentation of start_t over time until end_t and place the output in results/propagated (Fig. S1f).
 We recommend doing this step in batches, rather than using all time points. This will facilitate manual correction. For example, if the time series consists of 200 images, it is impractical to run propagation from beginning to end, e. g. From 1000 to 1200. Since segmentation and propagation are not perfect, errors will accumulate over time. It is instead a good idea to propagate 50 frames (e.g. 1000 to 1050) and inspect them visually. If the propagation is successful with only a few erroneously tracked chromosomes in the end, you can proceed with manual correction of this batch. If not, then take a smaller subset, 20 or 30 images, and correct those. Then re-start the propagation using the last corrected image as a new starting point. Note that in this case you must specify the location of the first image, otherwise it will be taken from results/inference/predictions/* and not account for the image you just corrected. So, suppose you placed the manually corrected images back into the results/propagated folder. Then to re-start the propagation, the command will be:
+
 python propagate.py 1050 1100 results/propagated
+
 Note the additional argument here.
