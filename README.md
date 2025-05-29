@@ -106,7 +106,7 @@ Apply the provided Embedseg model on the images in the "resized" folder. The mod
 
 python EMBEDSEG_predict.py
 
-The Embedseg prediction takes ~5 seconds per image on a GPU, and up to a minute on the CPU.
+The Embedseg prediction takes ~5 seconds per image on a GPU, and up to a minute on the CPU. If using a CPU-only machine, use the script EMBEDSEG_CPU_predict.py but note that it skips test time augmentation (the averaging of 16 model runs), so the accuracy might decrease slightly.
 
 6.	Refining segmentation labels
 
