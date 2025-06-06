@@ -37,6 +37,7 @@ def register_pairs():
         os.mkdir("temp")
 
     files = list(os.listdir("results/resized/test/images"))
+    files.sort()
 
     for img_filename in files[:-1]:
 
